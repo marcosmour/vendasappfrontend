@@ -1,5 +1,5 @@
 import { useState} from 'react'
-import { Layout } from 'components'
+import { Layout, Input } from 'components'
 
 export const CadastroProdutos: React.FC = () =>{
 
@@ -21,11 +21,16 @@ export const CadastroProdutos: React.FC = () =>{
     return (
         <Layout titulo='Produtos'>
             <div className="columns">
+                <Input label="SKU: *" 
+                    columnClasses="is-half"
+                    onChange={setSku}
+                    value={sku}
+                    />
                 <div className="field is-half column">
                     <label className="label" htmlFor="inputSku">SKU: *</label>
                     <div className="control">
                         <input className="input"
-                            id="inputSku" value={sku}
+                            id="inputSku" value={""}
                             onChange={ event=>setSku(event.target.value)}
                             placeholder="Digite o SKU do produto" />
 
