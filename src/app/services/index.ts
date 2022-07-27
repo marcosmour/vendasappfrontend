@@ -1,1 +1,1 @@
-export { } from './produto.service'
+export { useProdutoService } from './produto.service'
