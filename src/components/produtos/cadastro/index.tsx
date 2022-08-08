@@ -3,6 +3,7 @@ import { Layout, Input } from 'components'
 import { useProdutoService } from 'app/services'
 import { Produto } from 'app/models/produtos'
 
+
 export const CadastroProdutos: React.FC = () =>{
 
     const service = useProdutoService()
@@ -15,18 +16,27 @@ export const CadastroProdutos: React.FC = () =>{
 
     const submit = () => {
         const produto: Produto = {
-            sku, 
+            id,
+            sku,
             preco: parseFloat(preco), 
             nome, 
             descricao
         }
 
-        service
-        .salvar(produto)
-        .then(produtoResposta => {
-            setId(produtoResposta.id)
-            setCadastro(produtoResposta.cadastro)
-        })
+        if(id){
+            service
+                .atualizar(produto)
+                .then(produtoResposta => console.log("Atualizado!"))
+        }else{
+
+            service
+            .salvar(produto)
+            .then(produtoResposta => {
+                setId(produtoResposta.id)
+                setCadastro(produtoResposta.cadastro)
+            })
+        }
+
         
     }
 
@@ -92,11 +102,13 @@ export const CadastroProdutos: React.FC = () =>{
             </div>
 
             <div className="field is-grouped">
-                <div className="control">
-                     <button onClick={submit} className="button is-link">Submit</button>
+                <div className="control is-link">
+                     <button onClick={submit} className="button">
+                        { id? "Atualizar" : "Salvar"}
+                     </button>
                          </div>
                           <div className="control">
-                  <button className="button is-link is-light">Cancel</button>
+                  <button className="button ">Cancel</button>
                  </div>
             </div>
         </Layout>
