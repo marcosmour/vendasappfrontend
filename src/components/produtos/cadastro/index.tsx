@@ -3,6 +3,16 @@ import { Layout, Input, Message } from 'components'
 import { useProdutoService } from 'app/services'
 import { Produto } from 'app/models/produtos'
 import {converterEmBigDecimal } from 'app/util/money'
+import { Alert} from 'components/common/message'
+import * as yup from 'yup'
+import { json } from 'stream/consumers'
+
+const validationSchema = yup.object().shape({
+    sku: yup.string().required(),
+    nome:  yup.string().required(),
+    descricao:  yup.string().required(),
+    preco:  yup.number().required()
+})
 
 
 export const CadastroProdutos: React.FC = () =>{
@@ -14,6 +24,7 @@ export const CadastroProdutos: React.FC = () =>{
     const [descricao, setDescricao] = useState<string>('')
     const [ id, setId] = useState<string>('')
     const [ cadastro, setCadastro] = useState<string>('')
+    const [messages, setMessages] = useState<Array<Alert>>([])
 
     const submit = () => {
         const produto: Produto = {
@@ -24,26 +35,45 @@ export const CadastroProdutos: React.FC = () =>{
             descricao
         }
 
-        if(id){
-            service
-                .atualizar(produto)
-                .then(produtoResposta => console.log("Atualizado!"))
-        }else{
+        validationSchema.validate(produto).then(obj =>{
 
-            service
-            .salvar(produto)
-            .then(produtoResposta => {
-                setId(produtoResposta.id)
-                setCadastro(produtoResposta.cadastro)
-            })
-        }
+            if(id){
+                service
+                    .atualizar(produto)
+                    .then(produtoResposta => {
+                        setMessages([{
+                            tipo:  "success", texto: "Produto atualizado com sucesso!"
+                        }])
+                    })
+            }else{
+    
+                service
+                .salvar(produto)
+                .then(produtoResposta => {
+                    setId(produtoResposta.id)
+                    setCadastro(produtoResposta.cadastro)
+                    setMessages([{
+                        tipo:  "success", texto: "Produto salvo com sucesso!"
+                    }])
+                })
+            }
+        }).catch(err =>{
+            const field = err.path;
+            const message = err.message;
+
+            setMessages([
+
+                { tipo: "danger", field, texto: message}
+            ])
+        })
+
 
         
     }
 
     return (
-        <Layout titulo='Produtos'>
-            <Message field="Nome: " texto="Invalido!" tipo="danger"/>
+        <Layout titulo="Produtos" mensagens={messages}>
+            
             {id &&
               <div className="columns">
                 <Input label="Código:" 
