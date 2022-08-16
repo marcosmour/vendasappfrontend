@@ -5,13 +5,15 @@ import { Produto } from 'app/models/produtos'
 import {converterEmBigDecimal } from 'app/util/money'
 import { Alert} from 'components/common/message'
 import * as yup from 'yup'
-import { json } from 'stream/consumers'
+
+
+const msgCampoObrigatorio = "Campo Obrigatório";
 
 const validationSchema = yup.object().shape({
-    sku: yup.string().required(),
-    nome:  yup.string().required(),
-    descricao:  yup.string().required(),
-    preco:  yup.number().required()
+    sku: yup.string().trim().required(msgCampoObrigatorio),
+    nome:  yup.string().trim().required(msgCampoObrigatorio),
+    descricao:  yup.string().trim().required(msgCampoObrigatorio),
+    preco:  yup.number().required(msgCampoObrigatorio).moreThan(0, "Valor deve ser maior que 0,00 (Zero)")
 })
 
 
